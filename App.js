@@ -70,6 +70,31 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
+      {isScanning && (
+        <CameraView
+          style={styles.camera}
+          onBarcodeScanned={handleBarCodeScanned}
+          barCodeScannerSettings={{
+            barCodeTypes: ['qr'],
+          }}
+        />
+      )}
+
+      {!isScanning && scannedData ? (
+        <>
+          <Text style={styles.scannedDataText}>{scannedData}</Text>
+          <Button label="Go Back" theme="primary" onPress={handleGoBackToScan} />
+          <Button label="Home" theme="primary" onPress={handleGoBackHome} />
+        </>
+      ) : null}
+
+      {!isScanning && !scannedData && (
+        <Button
+          label="Start Scanning"
+          theme="primary"
+          onPress={handleStartScanning}
+        />
+      )}
     </View>
   );
 }
