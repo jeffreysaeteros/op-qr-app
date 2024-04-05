@@ -24,3 +24,52 @@ const styles = StyleSheet.create({
   },
 });
 
+export default function App() {
+  const [permission, requestPermission] = useCameraPermissions();
+  const [isScanning, setIsScanning] = useState(false);
+  const [scannedData, setScannedData] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await requestPermission();
+      if (status !== 'granted') {
+        alert('Permission to access camera was denied');
+        return;
+      }
+    })();
+  }, []);
+
+  const handleBarCodeScanned = ({ data }) => {
+    setIsScanning(false);
+    setScannedData(data);
+  };
+
+  const handleStartScanning = () => {
+    setScannedData('');
+    setIsScanning(true);
+  };
+
+  const handleGoBackToScan = () => {
+    setIsScanning(true);
+    setScannedData('');
+  };
+
+  const handleGoBackHome = () => {
+    setIsScanning(false);
+    setScannedData('');
+  }
+
+  if (!permission?.granted) {
+    return (
+      <View style={styles.container}>
+        <Text>Camera permission is required to use this feature.</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <StatusBar style="light" />
+    </View>
+  );
+}
