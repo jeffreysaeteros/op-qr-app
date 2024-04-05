@@ -29,6 +29,7 @@ export default function App() {
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState('');
 
+  // Request camera permission on component mount
   useEffect(() => {
     (async () => {
       const { status } = await requestPermission();
@@ -39,26 +40,31 @@ export default function App() {
     })();
   }, []);
 
+  // Handle barcode scanned event
   const handleBarCodeScanned = ({ data }) => {
     setIsScanning(false);
     setScannedData(data);
   };
 
+  // Handle start scanning button press
   const handleStartScanning = () => {
     setScannedData('');
     setIsScanning(true);
   };
 
+  // Handle go back to scan button press
   const handleGoBackToScan = () => {
     setIsScanning(true);
     setScannedData('');
   };
 
+  // Handle go back home button press
   const handleGoBackHome = () => {
     setIsScanning(false);
     setScannedData('');
   }
 
+  // Show message if camera permission is not granted
   if (!permission?.granted) {
     return (
       <View style={styles.container}>
@@ -70,6 +76,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar style="light" />
+      {/* Show camera view if scanning is enabled */}
       {isScanning && (
         <CameraView
           style={styles.camera}
@@ -80,14 +87,19 @@ export default function App() {
         />
       )}
 
+      {/* Show scanned data and buttons if scanning is disabled */}
       {!isScanning && scannedData ? (
         <>
           <Text style={styles.scannedDataText}>{scannedData}</Text>
+          <Button label="Check-In Device" theme="primary" onPress />
+          <Button label="Check-Out Device" theme="primary" onPress />
+          <Button label="Inventory" theme="primary" onPress />
           <Button label="Go Back" theme="primary" onPress={handleGoBackToScan} />
           <Button label="Home" theme="primary" onPress={handleGoBackHome} />
         </>
       ) : null}
 
+      {/* Show start scanning button if scanning is disabled */}
       {!isScanning && !scannedData && (
         <Button
           label="Start Scanning"
