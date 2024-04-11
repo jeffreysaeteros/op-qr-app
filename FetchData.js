@@ -5,6 +5,7 @@ const DataAPI = async () => {
         );
         let { values } = await data.json();
         let [, ...Data] = values.map((data) => data);
+        console.log(Data)
         return Data;
     } catch {
         console.log("Error");
