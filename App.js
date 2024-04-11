@@ -1,35 +1,21 @@
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera/next';
+import { StyleSheet, View, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useCameraPermissions } from 'expo-camera/next';
 
-import Button from './components/Button';
+import HomeScreen from './pages/HomeScreen';
+import InventoryScreen from './pages/InventoryScreen';
+import DetailScreen from './pages/DetailScreen';
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#25292e',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  camera: {
-    flex: 1,
-    width: '100%',
-    aspectRatio: 0.8,
-  },
-  scannedDataText: {
-    color: '#fff',
-    margin: 20,
-    fontSize: 18,
-  },
-});
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [permission, requestPermission] = useCameraPermissions();
   const [isScanning, setIsScanning] = useState(false);
   const [scannedData, setScannedData] = useState('');
 
-  // Request camera permission on component mount
   useEffect(() => {
     (async () => {
       const { status } = await requestPermission();
@@ -40,31 +26,26 @@ export default function App() {
     })();
   }, []);
 
-  // Handle barcode scanned event
   const handleBarCodeScanned = ({ data }) => {
     setIsScanning(false);
     setScannedData(data);
   };
 
-  // Handle start scanning button press
   const handleStartScanning = () => {
     setScannedData('');
     setIsScanning(true);
   };
 
-  // Handle go back to scan button press
   const handleGoBackToScan = () => {
     setIsScanning(true);
     setScannedData('');
   };
 
-  // Handle go back home button press
   const handleGoBackHome = () => {
     setIsScanning(false);
     setScannedData('');
   }
 
-  // Show message if camera permission is not granted
   if (!permission?.granted) {
     return (
       <View style={styles.container}>
@@ -74,39 +55,39 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      {/* Show camera view if scanning is enabled */}
-      {isScanning && (
-        <CameraView
-          style={styles.camera}
-          onBarcodeScanned={handleBarCodeScanned}
-          barCodeScannerSettings={{
-            barCodeTypes: ['qr'],
-          }}
-        />
-      )}
-
-      {/* Show scanned data and buttons if scanning is disabled */}
-      {!isScanning && scannedData ? (
-        <>
-          <Text style={styles.scannedDataText}>{scannedData}</Text>
-          <Button label="Check-In Device" theme="primary" onPress />
-          <Button label="Check-Out Device" theme="primary" onPress />
-          <Button label="Inventory" theme="primary" onPress />
-          <Button label="Go Back" theme="primary" onPress={handleGoBackToScan} />
-          <Button label="Home" theme="primary" onPress={handleGoBackHome} />
-        </>
-      ) : null}
-
-      {/* Show start scanning button if scanning is disabled */}
-      {!isScanning && !scannedData && (
-        <Button
-          label="Start Scanning"
-          theme="primary"
-          onPress={handleStartScanning}
-        />
-      )}
-    </View>
+    <NavigationContainer theme={MyTheme}>
+      <Stack.Navigator screenOptions={{
+        headerTintColor: 'white',
+        headerStyle: { backgroundColor: '#25292e' },
+        headerShadowVisible: false,
+      }}>
+        <Stack.Screen name="Home" >
+          {props => <HomeScreen {...props} isScanning={isScanning} handleBarCodeScanned={handleBarCodeScanned} scannedData={scannedData} handleStartScanning={handleStartScanning} handleGoBackToScan={handleGoBackToScan} handleGoBackHome={handleGoBackHome} />}
+        </Stack.Screen>
+        <Stack.Screen name="Inventory" component={InventoryScreen} />
+        <Stack.Screen name="Detail" component={DetailScreen} />
+      </Stack.Navigator>
+    </NavigationContainer >
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#25292e',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+const MyTheme = {
+  dark: true,
+  colors: {
+    primary: 'rgb(255, 45, 85)',
+    background: 'rgb(242, 242, 242)',
+    card: 'rgb(255, 255, 255)',
+    text: 'rgb(28, 28, 30)',
+    border: 'rgb(199, 199, 204)',
+    notification: 'rgb(255, 69, 58)',
+  },
+};
