@@ -2,7 +2,7 @@ import { StyleSheet, View, Pressable, Text } from 'react-native';
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const styles = StyleSheet.create({
-    buttonContainer: {
+    primaryButtonContainer: {
         width: 320,
         height: 68,
         marginHorizontal: 20,
@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         padding: 3,
     },
-    button: {
+    primaryButton: {
         borderRadius: 10,
         width: '100%',
         height: '100%',
@@ -18,8 +18,20 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         flexDirection: 'row',
     },
-    buttonIcon: {
-        paddingRight: 8,
+    secondaryButtonContainer: {
+        flexDirection: 'row',
+        // alignItems: 'center',
+        justifyContent: 'space-between',
+
+    },
+    secondaryButton: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        margin: 5,
+        width: 150,
+        height: 80,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     buttonLabel: {
         color: '#fff',
@@ -27,12 +39,24 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function Button({ label, theme, onPress }) {
+export default function Button({ label, labelOne, labelTwo, onPress, onPressOne, onPressTwo, theme }) {
     if (theme === "primary") {
         return (
-            <View style={[styles.buttonContainer, { borderRadius: 18 }]}>
-                <Pressable style={[styles.button, { backgroundColor: "#fff" }]} onPress={onPress}>
+            <View style={[styles.primaryButtonContainer, { borderRadius: 18 }]}>
+                <Pressable style={[styles.primaryButton, { backgroundColor: "#fff" }]} onPress={onPress}>
                     <Text style={[styles.buttonLabel, { color: "#25292e" }]}>{label}</Text>
+                </Pressable>
+            </View>
+        );
+    }
+    else if (theme === "secondary") {
+        return (
+            <View style={styles.secondaryButtonContainer}>
+                <Pressable style={styles.secondaryButton} onPress={onPressOne}>
+                    <Text style={[styles.buttonLabel, { color: "#25292e" }]}>{labelOne}</Text>
+                </Pressable>
+                <Pressable style={styles.secondaryButton} onPress={onPressTwo}>
+                    <Text style={[styles.buttonLabel, { color: "#25292e" }]}>{labelTwo}</Text>
                 </Pressable>
             </View>
         );
