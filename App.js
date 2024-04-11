@@ -4,10 +4,10 @@ import { StyleSheet, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useCameraPermissions } from 'expo-camera/next';
-
-import HomeScreen from './pages/HomeScreen';
-import InventoryScreen from './pages/InventoryScreen';
-import DetailScreen from './pages/DetailScreen';
+import HomeScreen from './screens/HomeScreen';
+import InventoryScreen from './screens/InventoryScreen';
+import DetailScreen from './screens/DetailScreen';
+import ScanScreen from './screens/ScanScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,9 +26,9 @@ export default function App() {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ data }) => {
-    setIsScanning(false);
+  const handleBarCodeScanned = (data, navigation) => {
     setScannedData(data);
+    navigation.navigate('Home');
   };
 
   const handleStartScanning = () => {
@@ -44,8 +44,9 @@ export default function App() {
   const handleGoBackHome = () => {
     setIsScanning(false);
     setScannedData('');
-  }
+  };
 
+  // Camera permissions
   if (!permission?.granted) {
     return (
       <View style={styles.container}>
@@ -56,18 +57,34 @@ export default function App() {
 
   return (
     <NavigationContainer theme={MyTheme}>
-      <Stack.Navigator screenOptions={{
-        headerTintColor: 'white',
-        headerStyle: { backgroundColor: '#25292e' },
-        headerShadowVisible: false,
-      }}>
-        <Stack.Screen name="Home" >
-          {props => <HomeScreen {...props} isScanning={isScanning} handleBarCodeScanned={handleBarCodeScanned} scannedData={scannedData} handleStartScanning={handleStartScanning} handleGoBackToScan={handleGoBackToScan} handleGoBackHome={handleGoBackHome} />}
+      <Stack.Navigator
+        screenOptions={{
+          headerTintColor: 'white',
+          headerStyle: { backgroundColor: '#25292e' },
+          headerShadowVisible: false,
+        }}
+      >
+        <Stack.Screen name="Home">
+          {props => (
+            <HomeScreen
+              {...props}
+              scannedData={scannedData}
+              handleGoBackHome={handleGoBackHome}
+            />
+          )}
+        </Stack.Screen>
+        <Stack.Screen name="Scan">
+          {props => (
+            <ScanScreen
+              {...props}
+              handleBarCodeScanned={(data) => handleBarCodeScanned(data, props.navigation)}
+            />
+          )}
         </Stack.Screen>
         <Stack.Screen name="Inventory" component={InventoryScreen} />
         <Stack.Screen name="Detail" component={DetailScreen} />
       </Stack.Navigator>
-    </NavigationContainer >
+    </NavigationContainer>
   );
 }
 
@@ -90,4 +107,4 @@ const MyTheme = {
     border: 'rgb(199, 199, 204)',
     notification: 'rgb(255, 69, 58)',
   },
-};
+}; 
