@@ -4,10 +4,12 @@ import { StyleSheet, View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useCameraPermissions } from 'expo-camera/next';
+
 import HomeScreen from './screens/HomeScreen';
 import InventoryScreen from './screens/InventoryScreen';
 import DetailScreen from './screens/DetailScreen';
 import ScanScreen from './screens/ScanScreen';
+import AddDeviceScreen from './screens/AddDeviceScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +85,7 @@ export default function App() {
         </Stack.Screen>
         <Stack.Screen name="Inventory" component={InventoryScreen} />
         <Stack.Screen name="Detail" component={DetailScreen} />
+        <Stack.Screen name="AddDevice" component={AddDeviceScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
