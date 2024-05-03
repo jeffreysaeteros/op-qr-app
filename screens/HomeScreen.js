@@ -56,7 +56,12 @@ const HomeScreen = ({ navigation, scannedData, handleGoBackHome }) => {
             )}
             <Button label="Add Device" theme="primary" onPress={handleAddDevice} />
 
-            <Modal isVisible={isModalVisible}>
+            <Modal isVisible={isModalVisible}
+                onBackdropPress={() => {
+                    console.log('Backdrop pressed');
+                    setIsModalVisible(false);
+                }}
+            >
                 <View style={styles.modalContainer}>
                     <Text style={styles.modalTitle}>Add Device</Text>
                     <TextInput
